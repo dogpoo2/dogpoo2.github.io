@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moving Random Polygons Background</title>
+    <title>Moving Polygon Edges Background</title>
     <style>
         /* Basic reset and full page setup */
         html, body {
@@ -47,7 +47,7 @@
     <canvas id="polygonCanvas"></canvas>
     <div class="container">
         <h1>Welcome to My Cool Website!</h1>
-        <p>Enjoy the moving random polygon background.</p>
+        <p>Enjoy the moving polygon edges background.</p>
     </div>
 
     <script>
@@ -100,8 +100,8 @@
                 }
             }
             ctx.closePath();
-            ctx.fillStyle = color;
-            ctx.fill();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2; // Adjust line width as needed
             ctx.stroke();
         }
 
