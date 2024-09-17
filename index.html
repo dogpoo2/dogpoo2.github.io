@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moving Polygon Edges Background</title>
+    <title>Slow Moving Polygon Edges Background</title>
     <style>
         /* Basic reset and full page setup */
         html, body {
@@ -47,7 +47,7 @@
     <canvas id="polygonCanvas"></canvas>
     <div class="container">
         <h1>Welcome to My Cool Website!</h1>
-        <p>Enjoy the moving polygon edges background.</p>
+        <p>Enjoy the slowly moving polygon edges background.</p>
     </div>
 
     <script>
@@ -71,8 +71,8 @@
                 const centerX = Math.random() * canvas.width;
                 const centerY = Math.random() * canvas.height;
                 const color = generateRandomColor();
-                const speedX = (Math.random() - 0.5) * 2;
-                const speedY = (Math.random() - 0.5) * 2;
+                const speedX = (Math.random() - 0.5) * 0.5; // Slower speed
+                const speedY = (Math.random() - 0.5) * 0.5; // Slower speed
                 
                 polygons.push({
                     numSides,
@@ -126,7 +126,7 @@
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            generateRandomPolygons(100);
+            generateRandomPolygons(30); // Fewer polygons
         }
 
         window.onload = () => {
