@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Polygon Background</title>
+    <title>Moving Random Polygons Background</title>
     <style>
         /* Basic reset and full page setup */
         html, body {
@@ -47,55 +47,94 @@
     <canvas id="polygonCanvas"></canvas>
     <div class="container">
         <h1>Welcome to My Cool Website!</h1>
-        <p>Enjoy the randomly generated polygon background.</p>
+        <p>Enjoy the moving random polygon background.</p>
     </div>
 
     <script>
-        function generateRandomPolygons(ctx, width, height, numPolygons) {
-            ctx.clearRect(0, 0, width, height);
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-            ctx.lineWidth = 2;
+        const canvas = document.getElementById('polygonCanvas');
+        const ctx = canvas.getContext('2d');
 
+        let polygons = [];
+
+        function generateRandomColor() {
+            const r = Math.floor(Math.random() * 50 + 100);
+            const g = Math.floor(Math.random() * 50 + 100);
+            const b = Math.floor(Math.random() * 50 + 100);
+            return `rgb(${r},${g},${b})`;
+        }
+
+        function generateRandomPolygons(numPolygons) {
+            polygons = [];
             for (let i = 0; i < numPolygons; i++) {
                 const numSides = Math.floor(Math.random() * 6) + 3; // Polygons with 3 to 8 sides
                 const radius = Math.random() * 150 + 50;
-                const centerX = Math.random() * width;
-                const centerY = Math.random() * height;
-
-                ctx.beginPath();
-                for (let j = 0; j < numSides; j++) {
-                    const angle = (j / numSides) * 2 * Math.PI;
-                    const x = centerX + radius * Math.cos(angle);
-                    const y = centerY + radius * Math.sin(angle);
-                    if (j === 0) {
-                        ctx.moveTo(x, y);
-                    } else {
-                        ctx.lineTo(x, y);
-                    }
-                }
-                ctx.closePath();
-                ctx.fill();
-                ctx.stroke();
+                const centerX = Math.random() * canvas.width;
+                const centerY = Math.random() * canvas.height;
+                const color = generateRandomColor();
+                const speedX = (Math.random() - 0.5) * 2;
+                const speedY = (Math.random() - 0.5) * 2;
+                
+                polygons.push({
+                    numSides,
+                    radius,
+                    centerX,
+                    centerY,
+                    color,
+                    speedX,
+                    speedY
+                });
             }
         }
 
-        window.onload = () => {
-            const canvas = document.getElementById('polygonCanvas');
-            const ctx = canvas.getContext('2d');
+        function drawPolygon(x, y, radius, numSides, color) {
+            const angleStep = (2 * Math.PI) / numSides;
+            ctx.beginPath();
+            for (let i = 0; i < numSides; i++) {
+                const angle = angleStep * i;
+                const xPos = x + radius * Math.cos(angle);
+                const yPos = y + radius * Math.sin(angle);
+                if (i === 0) {
+                    ctx.moveTo(xPos, yPos);
+                } else {
+                    ctx.lineTo(xPos, yPos);
+                }
+            }
+            ctx.closePath();
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.stroke();
+        }
 
+        function animatePolygons() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            polygons.forEach(poly => {
+                drawPolygon(poly.centerX, poly.centerY, poly.radius, poly.numSides, poly.color);
+                
+                // Update position
+                poly.centerX += poly.speedX;
+                poly.centerY += poly.speedY;
+
+                // Bounce off edges
+                if (poly.centerX < 0 || poly.centerX > canvas.width) poly.speedX *= -1;
+                if (poly.centerY < 0 || poly.centerY > canvas.height) poly.speedY *= -1;
+            });
+
+            requestAnimationFrame(animatePolygons);
+        }
+
+        function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            generateRandomPolygons(100);
+        }
 
-            generateRandomPolygons(ctx, canvas.width, canvas.height, 100);
-
-            // Redraw polygons on resize
-            window.onresize = () => {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-                generateRandomPolygons(ctx, canvas.width, canvas.height, 100);
-            };
+        window.onload = () => {
+            resizeCanvas();
+            animatePolygons();
         };
+
+        window.onresize = resizeCanvas;
     </script>
 </body>
 </html>
