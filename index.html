@@ -131,6 +131,7 @@
                 const color = generateRandomColor();
                 const speedX = (Math.random() - 0.5) * 0.5; // Slower speed
                 const speedY = (Math.random() - 0.5) * 0.5; // Slower speed
+                const angle = Math.random() * 2 * Math.PI; // Random orientation
                 
                 polygons.push({
                     numSides,
@@ -144,13 +145,15 @@
             }
         }
 
-        function drawPolygon(x, y, radius, numSides, color) {
+        function drawPolygon(x, y, radius, numSides, color, angle) {
             const angleStep = (2 * Math.PI) / numSides;
+            ctx.save(); // Save the current state
+            ctx.translate(x, y); // Move to the center
+            ctx.rotate(angle); // Rotate by the random angle
             ctx.beginPath();
             for (let i = 0; i < numSides; i++) {
-                const angle = angleStep * i;
-                const xPos = x + radius * Math.cos(angle);
-                const yPos = y + radius * Math.sin(angle);
+                const xPos = radius * Math.cos(angleStep * i);
+                const yPos = radius * Math.sin(angleStep * i);
                 if (i === 0) {
                     ctx.moveTo(xPos, yPos);
                 } else {
@@ -161,13 +164,14 @@
             ctx.strokeStyle = color;
             ctx.lineWidth = 2; // Adjust line width as needed
             ctx.stroke();
+            ctx.restore(); // Restore the original state
         }
 
         function animatePolygons() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             polygons.forEach(poly => {
-                drawPolygon(poly.centerX, poly.centerY, poly.radius, poly.numSides, poly.color);
+                drawPolygon(poly.centerX, poly.centerY, poly.radius, poly.numSides, poly.color, poly.angle);
                 
                 // Update position
                 poly.centerX += poly.speedX;
